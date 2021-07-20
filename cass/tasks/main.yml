@@ -1,0 +1,18 @@
+---
+# tasks file for cass
+    - name: Draining node and wait for 20 sec
+      shell: "nodetool drain && sleep 20"
+
+    - name: Restart cassandra
+      service:
+        name: cassandra
+        state: restarted
+
+    - name: Wait for restart to complete
+      wait_for:
+        host: "{{ ansible_ssh_host }}"
+        port: 9042
+
+    - name: Wait 20 more seconds
+      wait_for:
+        timeout: 20

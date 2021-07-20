@@ -1,0 +1,29 @@
+---
+- name: Running maintenane for Z-CASSANDRA
+  hosts: zcass[0]
+  gather_facts: no
+
+  tasks:
+    - name: Checking the nodetool status before proceeding for maintenance
+      shell: nodetool status | grep -A 14 'cac' | cut -d ' ' -f 1,3
+      register: NODETOOL_PRE_RESTART
+    - debug: msg={{NODETOOL_PRE_RESTART.stdout.split('\n')}}
+    - pause:
+        prompt: "Press ENTER to continue or CTRL+C to abort"
+
+- hosts: zcass
+  become: true
+  serial: 1
+  gather_facts: no
+  roles:
+    - cass
+
+- name: Finished maintenace for Z-CASSANDRA
+  hosts: zcass[0]
+  gather_facts: no
+
+  tasks:
+    - name: Check the nodetool status after restarting the servers
+      shell: nodetool status | grep -A 14 'cac' | cut -d ' ' -f 1,3
+      register: NODETOOL_POST_RESTART
+    - debug: msg={{NODETOOL_POST_RESTART.stdout.split('\n')}}

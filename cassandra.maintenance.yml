@@ -1,0 +1,9 @@
+---
+#This will run the cassandra mainteance for all cluster unless explictly tags are specified which will invoke individual cluster.
+
+- import_playbook: dcass.yml
+  tags: dcass
+- import_playbook: scass.yml
+  tags: scass
+- import_playbook: zcass.yml
+  tags: zcass
